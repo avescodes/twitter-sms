@@ -16,16 +16,17 @@ Setup
 To use twtbot you will need only to create the config file "~/.twtbot.conf" and fill it with the necessary YAML mappings.
 
 Here is an example conf:
-  bot:
-    email: "twitter.bot@gmail.com"
-    password: p0n33zR0oL
-  user:
-    name: "rkneufeld"
-    password: p0n33zR0oL
-    phone: 12045555555@text.provider.net
-  config:
-    wait: 5
-    keep_alive: true
+
+    bot:
+      email: "twitter.bot@gmail.com"
+      password: p0n33zR0oL
+    user:
+      name: "rkneufeld"
+      password: p0n33zR0oL
+      phone: 12045555555@text.provider.net
+    config:
+      wait: 5
+      keep_alive: true
 
 This config will cause the script to run forever; sending you the last 5 minutes tweets every 5 minutes.
 

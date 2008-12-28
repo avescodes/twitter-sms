@@ -4,8 +4,7 @@ twtbot: Twitter SMS for the rest of us.
 As many of you are probably aware Twitter recently discontinued SMS service to many Countries, mine included.
 
 Fortunately there exist ways to get around this, by running your own SMS bot. I created twtbot as a simple SMS bot for people in my situation:
-* SMS service with email address tied to account. 
-**i.e. email to "1204555555@text.provider.net" sends an SMS message to your phone
+* SMS service with email address tied to account. i.e. email to "1204555555@text.provider.net" sends an SMS message to your phone
 * Server or Home PC to run the script either continually or as a cron job
 * Gmail account to send messages from (your own or a bot account)
 

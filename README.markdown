@@ -24,9 +24,9 @@ Here is an example conf:
       password: p0n33zR0oL
       phone: 12045555555@text.provider.net
     config:
-      wait: 5
+      per_hour: 12
       keep_alive: true
 
-This config will cause the script to run forever; sending you the last 5 minutes tweets every 5 minutes.
+This config will cause the script to run forever; sending you the last 5 minutes tweets every 5 minutes. (60 / 5 == 12)
 
 One can also run the script as a cron job; instructions to follow soon...

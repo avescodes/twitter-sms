@@ -13,6 +13,7 @@ class Twtbot
     @bot = bot
     @config = config
     @config['wait'] = SEC_PER_HOUR / @config['per_hour'] # translate to seconds and store
+    @config['own_tweets'] ||= false
 
     Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
   end
@@ -38,7 +39,7 @@ class Twtbot
 
       tweets = twitter.timeline(:friends, :since => now - @config['wait'] - FUZZ)
 
-      tweets.reject! {|t| t.user.screen_name == @user['name']}
+      tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
       tweets.reverse! # Put things in right order
     else
       puts "Your account has run out of API calls; call not made."

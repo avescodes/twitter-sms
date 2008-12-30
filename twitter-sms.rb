@@ -6,7 +6,7 @@ require 'tlsmail'
 SEC_PER_HOUR = 3600 # Seconds per hour
 FUZZ = 5 # Fuzz for ":since => now - ..."; makes sure we don't miss the odd twit
 
-class Twtbot
+class TwitterSms
 
   def initialize(user,bot,config)
     @user = user
@@ -68,6 +68,6 @@ EOF
 
 end
 
-config = YAML.load_file(ENV['HOME'] + '/.twtbot.conf')
-program = Twtbot.new(config['user'],config['bot'],config['config'])
+config = YAML.load_file(ENV['HOME'] + '/.twitter-sms.conf')
+program = TwitterSms.new(config['user'],config['bot'],config['config'])
 program.run

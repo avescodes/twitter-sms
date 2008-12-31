@@ -8,19 +8,29 @@ FUZZ = 5 # Fuzz for ":since => now - ..."; makes sure we don't miss the odd twit
 
 class TwitterSms
 
-  def initialize(user,bot,config)
-    @user = user
-    @bot = bot
-    @config = config
+  def initialize(config_file="#{ENV['HOME'] + '/.twitter-sms.conf'}")
+    # Load config file
+    config = YAML.load_file(config_file)
+    @config_file = config_file
+    @config_file_modified = "test" # Get value of last modified
+
+    # Seperate config hashes into easier to use parts
+    @user = config['user']
+    @bot = config['bot']
+    @config = config['config']
+
+    # Tweak based on settings received
     @config['wait'] = SEC_PER_HOUR / @config['per_hour'] # translate to seconds and store
     @config['own_tweets'] ||= false
 
+    # Required for gmail smtp (and not a part of standalone Net::SMTP)
     Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
   end
 
   def run
     if @config['keep_alive']
       while true
+        update_config if config_stale?
         tweets = update
         send tweets unless tweets.nil?
         Kernel.sleep @config['wait']
@@ -65,9 +75,20 @@ EOF
     puts "Messages sent."
   end
 
+  def update_config
+
+
+  end
+
+  private
+
+  def config_stale?
+    # check if config's last modified has changed
+    true
+  end
+
 
 end
 
-config = YAML.load_file(ENV['HOME'] + '/.twitter-sms.conf')
-program = TwitterSms.new(config['user'],config['bot'],config['config'])
+program = TwitterSms.new()
 program.run

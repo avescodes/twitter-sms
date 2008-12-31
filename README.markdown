@@ -20,7 +20,7 @@ Here is an example conf:
       email: "twitter.bot@gmail.com"
       password: p0n33zR0oL
     user:
-      name: "rkneufeld"
+      name: rkneufeld
       password: p0n33zR0oL
       phone: 12045555555@text.provider.net
     config:

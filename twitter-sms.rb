@@ -88,6 +88,9 @@ EOF
 
 end
 
-# Add some logic for command line options
-program = TwitterSms.new()
-program.run
+# Run as program only if library is the running program
+if $0 == __FILE__
+  # Add some logic for command line options
+  program = TwitterSms.new()
+  program.run
+end

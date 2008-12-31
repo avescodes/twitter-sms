@@ -15,18 +15,16 @@ class TwitterSms
     Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
   end
 
+  # Run the twitter-sms bot once or repeatedly, depending on config
   def run
-    if @config['keep_alive']
-      while @config['keep_alive']
-        load_config if config_stale?
-        tweets = update
-        send tweets unless tweets.nil?
-        Kernel.sleep @config['wait']
-      end
-    else
+    begin # do-while
+      load_config if config_stale?
+
       tweets = update
       send tweets unless tweets.nil?
-    end
+
+      Kernel.sleep @config['wait'] if @config['keep_alive']
+    end while @config['keep_alive']
   end
 
   # Collect a list of recent tweets on a user's timeline (that are not their own)
@@ -44,6 +42,7 @@ class TwitterSms
     end
   end
 
+  # Email via Gmail SMTP any tweets to the desired cell phone
   def send(tweets)
     puts "Sending received tweets..."
     Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
@@ -63,6 +62,7 @@ EOF
     puts "Messages sent."
   end
 
+  # Parse and store a config file (either as an initial load or as an update)
   def load_config(config_file=@config_file['name'])
     # Load config file -- Add try block here
     config = YAML.load_file(config_file)

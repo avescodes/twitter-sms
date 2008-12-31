@@ -3,9 +3,9 @@ twitter-sms: Twitter SMS for the rest of us.
 
 Twitter-sms bridges the gap left by Twitter.com when it removed SMS capability for many countries. Twitter-sms runs in the background and periodically checks Twitter for new tweets; When new tweets are found they are forwarded via a gmail account to your mobile phone's email address. 
 
-All it requires is a 
-* A running computer with internet access and Ruby installed. (*nix systems only for the moment.)
-* google email address (to forward messages from)
+All it requires is:
+* A running computer with internet access and Ruby installed. (*nix systems only for the moment.),
+* A google email address (to forward messages from) and,
 * An SMS capable phone with an email-to-sms email address. (i.e. 12345551234@text.provider.net that automatically forwards messages to your phone as SMS)
 
 DISCLAIMER: Please bear in mind that it MAY cost you to receive text message on your email address; I am not responsable for any costs incurred to you using this program.

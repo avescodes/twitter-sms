@@ -1,14 +1,14 @@
 twitter-sms: Twitter SMS for the rest of us.
 =======================================
 
-As many of you are probably aware Twitter recently discontinued SMS service to many Countries, mine included.
+Twitter-sms bridges the gap left by Twitter.com when it removed SMS capability for many countries. Twitter-sms runs in the background and periodically checks Twitter for new tweets; When new tweets are found they are forwarded via a gmail account to your mobile phone's email address. 
 
-Fortunately there exist ways to get around this, by running your own SMS bot. I created twitter-sms as a simple SMS bot for people in my situation:
-* SMS service with email address tied to account. i.e. email to "1204555555@text.provider.net" sends an SMS message to your phone
-* Server or Home PC to run the script either continually or as a cron job
-* Gmail account to send messages from (your own or a bot account)
+All it requires is a 
+* A running computer with internet access and Ruby installed. (*nix systems only for the moment.)
+* google email address (to forward messages from)
+* An SMS capable phone with an email-to-sms email address. (i.e. 12345551234@text.provider.net that automatically forwards messages to your phone as SMS)
 
-If you fit this description then twitter-sms may be just the thing for you. Bear in mind it MAY cost you to receive text message on your email address; I am not responsable for any consts incurred to you using this script.
+DISCLAIMER: Please bear in mind that it MAY cost you to receive text message on your email address; I am not responsable for any costs incurred to you using this program.
 
 Setup
 -----
@@ -22,7 +22,7 @@ Here is an example conf:
     user:
       name: rkneufeld
       password: p0n33zR0oL
-      phone: 12045555555@text.provider.net
+      phone: "12045555555@text.provider.net"
     config:
       per_hour: 12
       keep_alive: true

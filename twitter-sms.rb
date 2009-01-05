@@ -49,11 +49,7 @@ class TwitterSms
     puts "Sending received tweets..."
     Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
       tweets.each do |tweet|
-        content = "From: #{@bot['email']}\n"+
-                   "To: #{@user['phone']}\n"+
-                   "Date: #{Time.parse(tweet.created_at).rfc2822}\n\n"+
-                   "#{tweet.user.screen_name}: #{tweet.text}"
-        smtp.send_message(content,@bot['email'],@user['phone'])
+        smtp.send_message(content(tweet),@bot['email'],@user['phone'])
         puts "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
       end
     end
@@ -62,7 +58,6 @@ class TwitterSms
 
   # Parse and store a config file (either as an initial load or as an update)
   def load_config(config_file=@config_file['name'])
-
     # Load config file -- Add try block here
     config = YAML.load_file(config_file)
     @config_file = { 'name' => config_file,
@@ -123,6 +118,12 @@ class TwitterSms
     return File.mtime(@config_file['name']) > @config_file['modified_at']
   end
 
+  def content(tweet)
+    "From: #{@bot['email']}\n"+
+    "To: #{@user['phone']}\n"+
+    "Date: #{Time.parse(tweet.created_at).rfc2822}\n\n"+
+    "#{tweet.user.screen_name}: #{tweet.text}"
+  end
 
 end
 

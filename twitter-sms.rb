@@ -33,12 +33,13 @@ class TwitterSms
   def update
     twitter = Twitter::Base.new(@user['name'],@user['password'])
     if twitter.rate_limit_status.remaining_hits > 0
-      now = Time.now
+      # For :since the 'FUZZ' is a few seconds used to try and keep missing seconds from
+      # cropping up. Consequently it may send duplicate messages
+      tweets = twitter.timeline(:friends, :since => Time.now - @config['wait'] - FUZZ)
 
-      tweets = twitter.timeline(:friends, :since => now - @config['wait'] - FUZZ)
-
+      # Block own tweets if specified via settings
       tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
-      tweets.reverse! # Put things in right order
+      tweets.reverse! # reverse-chronological
     else
       puts "Your account has run out of API calls; call not made."
     end

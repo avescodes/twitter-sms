@@ -25,36 +25,49 @@ class TwitterSms
       tweets = update
       send tweets unless tweets.nil?
 
-      Kernel.sleep @config['wait'] if @config['keep_alive']
+
+
+      if @config['keep_alive']
+        puts "Waiting for #{@config['wait']/60.0} minutes..."
+        Kernel.sleep @config['wait']
+      end
     end while @config['keep_alive']
   end
 
   # Collect a list of recent tweets on a user's timeline (that are not their own)
   def update
     twitter = Twitter::Base.new(@user['name'],@user['password'])
-    if twitter.rate_limit_status.remaining_hits > 0
-      # For :since the 'FUZZ' is a few seconds used to try and keep missing seconds from
-      # cropping up. Consequently it may send duplicate messages
-      tweets = twitter.timeline(:friends, :since => Time.now - @config['wait'] - FUZZ)
+    begin
+      if twitter.rate_limit_status.remaining_hits > 0
+        # For :since the 'FUZZ' is a few seconds used to try and keep missing seconds from
+        # cropping up. Consequently it may send duplicate messages
 
-      # Block own tweets if specified via settings
-      tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
-      tweets.reverse! # reverse-chronological
-    else
-      puts "Your account has run out of API calls; call not made."
+        tweets = twitter.timeline(:friends, :since => Time.now - @config['wait'] - FUZZ)
+        # Block own tweets if specified via settings
+        tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
+        tweets.reverse! # reverse-chronological
+      else
+        puts "Your account has run out of API calls; call not made."
+      end
+    rescue
+      puts "Error occured retreiving timeline. Perhaps Internet is down?"
     end
   end
 
   # Email via Gmail SMTP any tweets to the desired cell phone
   def send(tweets)
     puts "Sending received tweets..."
-    Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
-      tweets.each do |tweet|
-        smtp.send_message(content(tweet),@bot['email'],@user['phone'])
-        puts "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
+    begin
+      Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
+        tweets.each do |tweet|
+          smtp.send_message(content(tweet),@bot['email'],@user['phone']) rescue puts "Error occured sending message:"
+          puts "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
+        end
       end
+      puts "Messages sent."
+    rescue
+      puts "Error occured starting smtp. Perhaps account info is incorrect or Internet is down?"
     end
-    puts "Messages sent."
   end
 
   # Parse and store a config file (either as an initial load or as an update)

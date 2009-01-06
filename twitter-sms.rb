@@ -5,7 +5,11 @@ require 'tlsmail'
 require 'optparse'
 
 SEC_PER_HOUR = 3600 # Seconds per hour
-FUZZ = 5 # Fuzz for ":since => now - ..."; makes sure we don't miss the odd twit
+
+# Put Debug (prepend time)
+def putd (message)
+  puts "#{Time.now.strftime("(%b %d - %H:%M:%S)")} #{message}"
+end
 
 class TwitterSms
 
@@ -25,10 +29,8 @@ class TwitterSms
       tweets = update
       send tweets unless tweets.nil?
 
-
-
       if @config['keep_alive']
-        puts "Waiting for #{@config['wait']/60.0} minutes..."
+        putd "Waiting for ~#{@config['wait']/60} minutes..."
         Kernel.sleep @config['wait']
       end
     end while @config['keep_alive']
@@ -37,36 +39,37 @@ class TwitterSms
   # Collect a list of recent tweets on a user's timeline (that are not their own)
   def update
     twitter = Twitter::Base.new(@user['name'],@user['password'])
+
     begin
       if twitter.rate_limit_status.remaining_hits > 0
-        # For :since the 'FUZZ' is a few seconds used to try and keep missing seconds from
-        # cropping up. Consequently it may send duplicate messages
+        now = Time.now
+        tweets = twitter.timeline(:friends, :since => @last_check)
+        @last_check = now
 
-        tweets = twitter.timeline(:friends, :since => Time.now - @config['wait'] - FUZZ)
         # Block own tweets if specified via settings
         tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
         tweets.reverse! # reverse-chronological
       else
-        puts "Your account has run out of API calls; call not made."
+        putd "Your account has run out of API calls; call not made."
       end
     rescue
-      puts "Error occured retreiving timeline. Perhaps Internet is down?"
+      putd "Error occured retreiving timeline. Perhaps Internet is down?"
     end
   end
 
   # Email via Gmail SMTP any tweets to the desired cell phone
   def send(tweets)
-    puts "Sending received tweets..."
+    putd "Sending received tweets..."
     begin
       Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
         tweets.each do |tweet|
-          smtp.send_message(content(tweet),@bot['email'],@user['phone']) rescue puts "Error occured sending message:"
-          puts "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
+          smtp.send_message(content(tweet),@bot['email'],@user['phone']) rescue putd "Error occured sending message:"
+          putd "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
         end
       end
-      puts "Messages sent."
+      putd "Messages sent."
     rescue
-      puts "Error occured starting smtp. Perhaps account info is incorrect or Internet is down?"
+      putd "Error occured starting smtp. Perhaps account info is incorrect or Internet is down?"
     end
   end
 
@@ -87,6 +90,7 @@ class TwitterSms
                   'per_hour' => 60}.merge(config['config'])
 
     set_wait
+    @last_check = Time.now - @config['wait']
   end
 
   private

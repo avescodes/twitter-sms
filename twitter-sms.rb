@@ -3,6 +3,7 @@ require 'rubygems'
 require 'twitter'
 require 'tlsmail'
 require 'optparse'
+require 'cgi'
 
 SEC_PER_HOUR = 3600 # Seconds per hour
 
@@ -85,9 +86,10 @@ class TwitterSms
     @user = config['user']
     @bot = config['bot']
     # Merge specified config onto defaults
-    @config = { 'own_tweets' => false,
+    default = { 'own_tweets' => false,
                 'keep_alive' => true,
-                  'per_hour' => 60}.merge(config['config'])
+                  'per_hour' => 60}
+    @config = config['config'].merge(default)
 
     set_wait
     @last_check = Time.now - @config['wait']
@@ -140,7 +142,7 @@ class TwitterSms
     "From: #{@bot['email']}\n"+
     "To: #{@user['phone']}\n"+
     "Date: #{Time.parse(tweet.created_at).rfc2822}\n\n"+
-    "#{tweet.user.screen_name}: #{tweet.text}"
+    "#{tweet.user.screen_name}: #{CGI.escapeHTML(tweet.text)}"
   end
 
 end

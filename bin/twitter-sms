@@ -148,7 +148,7 @@ class TwitterSms
 end
 
 # Run as program only if library is the running program
-if $0 == __FILE__
+if $0.split('/')[-1] == __FILE__.split('/')[-1] # Can anyone fix this idiom for me; I just know its wrong
   # Add some logic for command line options
   program = TwitterSms.new
   program.run

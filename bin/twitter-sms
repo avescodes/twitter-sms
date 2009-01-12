@@ -43,8 +43,8 @@ class TwitterSms
 
     begin
       if twitter.rate_limit_status.remaining_hits > 0
-        now = Time.now
-        tweets = twitter.timeline(:friends, :since => @last_check)
+        now         = Time.now
+        tweets      = twitter.timeline(:friends, :since => @last_check)
         @last_check = now
 
         # Block own tweets if specified via settings
@@ -77,19 +77,19 @@ class TwitterSms
   # Parse and store a config file (either as an initial load or as an update)
   def load_config(config_file=@config_file['name'])
     # Load config file -- Add try block here
-    config = YAML.load_file(config_file)
-    @config_file = { 'name' => config_file,
-              'modified_at' => File.mtime(config_file) }
+    config                  =  YAML.load_file(config_file)
+    @config_file            =  { 'name' => config_file,
+                          'modified_at' => File.mtime(config_file) }
 
 
     # Seperate config hashes into easier to use parts
-    @user = config['user']
-    @bot = config['bot']
+    @user                    =  config['user']
+    @bot                     =  config['bot']
     # Merge specified config onto defaults
-    default = { 'own_tweets' => false,
-                'keep_alive' => true,
-                  'per_hour' => 60}
-    @config = config['config'].merge(default)
+    default                  =  { 'own_tweets' => false,
+                                  'keep_alive' => true,
+                                    'per_hour' => 60}
+    @config                  =  config['config'].merge(default)
 
     set_wait
     @last_check = Time.now - @config['wait']

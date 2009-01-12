@@ -7,6 +7,6 @@ Gem::Specification.new do |s|
   s.description = 'Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account.'
   s.summary = 'Twitter-SMS lets you send SMS updates to your phone.'
   s.homepage = 'http://www.github.com/neufelry/twitter-sms'
-  s.files = ["README.md", "example.conf","lib/twitter-sms","Rakefile"]
-  s.executable = ['lib/twitter-sms']
+  s.files = ["README.md", "example.conf"]
+  s.executable = ['twitter-sms']
 end

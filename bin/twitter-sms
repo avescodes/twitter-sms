@@ -91,7 +91,7 @@ class TwitterSms
     default                  =  { 'own_tweets' => false,
                                   'keep_alive' => true,
                                     'per_hour' => 60}
-    @config                  =  config['config'].merge(default)
+    @config                  =  default.merge(@config['config'])
 
     set_wait
     @last_check = Time.now - @config['wait']

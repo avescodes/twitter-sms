@@ -76,23 +76,24 @@ class TwitterSms
     end
   end
 
-  # Parse and store a config file (either as an initial load or as an update)
+  # Parse and store a config file (either as an initial load or as
+  # an update)
   def load_config(config_file=@config_file['name'])
     # Load config file -- Add try block here
-    config                  =  YAML.load_file(config_file)
+    loaded_config           =  YAML.load_file(config_file)
     @config_file            =  { 'name' => config_file,
                           'modified_at' => File.mtime(config_file) }
 
 
     # Seperate config hashes into easier to use parts
-    @user                    =  config['user']
-    @bot                     =  config['bot']
+    @user                    =  loaded_config['user']
+    @bot                     =  loaded_config['bot']
     # Merge specified config onto defaults
     default                  =  { 'own_tweets' => false,
                                   'keep_alive' => true,
                                     'per_hour' => 60}
 
-    @config                  =  default.merge(config['config'])
+    @config                  =  default.merge(loaded_config['config'])
 
     set_wait
     @last_check = Time.now - @config['wait']

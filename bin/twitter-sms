@@ -95,6 +95,7 @@ class TwitterSms
 
     set_wait
     @last_check = Time.now - @config['wait']
+    putd "Loaded config file"
   end
 
   private

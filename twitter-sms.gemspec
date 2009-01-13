@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = 'twitter-sms'
-  s.version = "0.1"
+  s.version = "0.2"
   s.date = '2009-01-11'
   s.authors = ["Ryan Neufeld"]
   s.email = 'neufelry@gmail.com'

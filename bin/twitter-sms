@@ -16,7 +16,7 @@ class TwitterSms
 
   def initialize(config_file="#{ENV['HOME'] + '/.twitter-sms.conf'}", args=ARGV)
     load_config(config_file)
-    load_opts(args)
+    load_opts(args) # Loaded options are intended to overide defaults
 
     # Required for gmail smtp (and not a part of standalone Net::SMTP)
     Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
@@ -64,17 +64,23 @@ class TwitterSms
   def send(tweets)
     putd "Sending received tweets..."
     begin
-      Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com', @bot['email'], "tweeterbot", :login) do |smtp|
+      # Start smtp connection to provided bot email
+      Net::SMTP.start('smtp.gmail.com', 587, 'gmail.com',
+                      @bot['email'], @bot['password'], :login) do |smtp|
+
         tweets.each do |tweet|
           smtp.send_message(content(tweet),@bot['email'],@user['phone']) rescue putd "Error occured sending message:"
           putd "\tSent: #{tweet.user.screen_name}: #{tweet.text[0..20]}..."
         end
+
       end
       putd "Messages sent."
     rescue
       putd "Error occured starting smtp. Perhaps account info is incorrect or Internet is down?"
     end
   end
+
+  private
 
   # Parse and store a config file (either as an initial load or as
   # an update)
@@ -88,19 +94,18 @@ class TwitterSms
     # Seperate config hashes into easier to use parts
     @user                    =  loaded_config['user']
     @bot                     =  loaded_config['bot']
-    # Merge specified config onto defaults
+
     default                  =  { 'own_tweets' => false,
                                   'keep_alive' => true,
                                     'per_hour' => 60}
 
+    # Merge specified config onto defaults
     @config                  =  default.merge(loaded_config['config'])
 
     set_wait
     @last_check = Time.now - @config['wait']
     putd "Loaded config file"
   end
-
-  private
 
   # Set wait time based on times per hour
   def set_wait
@@ -113,10 +118,15 @@ class TwitterSms
       opts.banner += "==========================\n"
       opts.banner += "Usage #$0 [options]"
 
+      # The problem with this is if the asked for config file doesn't exist
+      opts.on('-c', '--config-file [FILE]',
+              'Location of the config file to be loaded') do |filename|
+        load_config(filename)
+      end
+
       opts.on('-t', '--times-per-hour [TIMES]',
-              'Indicate the amount of times per hour to check (0 < TIMES <= 100)') do |times|
-        times = 100 if times > 100
-        times = 1 if times < 1 # once per hour minimum?
+              'Indicate the amount of times per hour to check (> 0)') do |times|
+        times = 1 if times <= 0
         @config['per_hour'] = times
       end
 
@@ -143,18 +153,23 @@ class TwitterSms
     return File.mtime(@config_file['name']) > @config_file['modified_at']
   end
 
+  # Produce the content of the SMTP message to be sent
   def content(tweet)
     "From: #{@bot['email']}\n"+
     "To: #{@user['phone']}\n"+
+    #On date line 2 '\n's are required for proper message
     "Date: #{Time.parse(tweet.created_at).rfc2822}\n\n"+
     "#{tweet.user.screen_name}: #{CGI.escapeHTML(tweet.text)}"
   end
 
 end
 
-# Run as program only if library is the running program
-if $0.split('/')[-1] == __FILE__.split('/')[-1] # Can anyone fix this idiom for me; I just know its wrong
-  # Add some logic for command line options
+def filename(path)
+  path.split('/')[-1]
+end
+
+# Run only if in same file
+if filename($0) == filename(__FILE__)
   program = TwitterSms.new
   program.run
 end

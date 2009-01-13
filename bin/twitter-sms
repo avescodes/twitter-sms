@@ -31,7 +31,7 @@ class TwitterSms
       send tweets unless tweets.nil?
 
       if @config['keep_alive']
-        putd "Waiting for ~#{@config['wait']/60} minutes..."
+        putd "Waiting for ~#{@config['wait']/60.0} minutes..."
         Kernel.sleep @config['wait']
       end
     end while @config['keep_alive']

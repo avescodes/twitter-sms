@@ -49,6 +49,8 @@ class TwitterSms
 
         # Block own tweets if specified via settings
         tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
+        # Don't send messages from users under no_follow
+        tweets.reject! {|t| @config['no_follow'].member?(t.user.screen_name) }
         tweets.reverse! # reverse-chronological
       else
         putd "Your account has run out of API calls; call not made."

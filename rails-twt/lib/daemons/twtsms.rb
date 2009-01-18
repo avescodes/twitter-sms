@@ -10,7 +10,7 @@ Signal.trap("TERM") do
   $running = false
 end
 
-twitter = TwitterSms.new(File.dirname(__FILE__) + "/../../config/twitter-sms")
+twitter = TwitterSms.new(File.dirname(__FILE__) + "/../../config/twitter-sms.yml")
 while($running) do
   ActiveRecord::Base.logger.info "This daemon is still running at #{Time.now}.\n"
   twitter.run

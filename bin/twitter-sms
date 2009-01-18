@@ -7,10 +7,7 @@ require 'cgi'
 
 SEC_PER_HOUR = 3600 # Seconds per hour
 
-# Put Debug (prepend time)
-def putd (message)
-  puts "#{Time.now.strftime("(%b %d - %H:%M:%S)")} #{message}"
-end
+
 
 class TwitterSms
 
@@ -51,7 +48,7 @@ class TwitterSms
         tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
         # Don't send messages from users under no_follow
         tweets.reject! {|t| @config['no_follow'].member?(t.user.screen_name) }
-        tweets.reverse! # reverse-chronological
+        tweets.reverse # reverse-chronological
       else
         putd "Your account has run out of API calls; call not made."
       end
@@ -82,6 +79,11 @@ class TwitterSms
 
   private
 
+  # Put Debug (prepend time) if debug printouts turned on
+  def putd (message)
+    puts "#{Time.now.strftime("(%b %d - %H:%M:%S)")} #{message}" if @config['debug']
+  end
+
   # Parse and store a config file (either as an initial load or as
   # an update)
   def load_config(config_file=@config_file['name'])
@@ -97,7 +99,8 @@ class TwitterSms
 
     default                  =  { 'own_tweets' => false,
                                   'keep_alive' => true,
-                                    'per_hour' => 60}
+                                    'per_hour' => 30,
+                                       'debug' => false}
 
     # Merge specified config onto defaults
     @config                  =  default.merge(loaded_config['config'])

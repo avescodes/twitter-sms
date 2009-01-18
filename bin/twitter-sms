@@ -22,7 +22,7 @@ class TwitterSms
   # Run the twitter-sms bot once or repeatedly, depending on config
   def run
     begin # do-while
-      load_config if config_stale?
+      load_config if config_stale? unless config['refresh_config']
 
       tweets = update
       send tweets unless tweets.nil?
@@ -32,6 +32,7 @@ class TwitterSms
         Kernel.sleep @config['wait']
       end
     end while @config['keep_alive']
+    tweets # Return the last set of tweets we get
   end
 
   # Collect a list of recent tweets on a user's timeline (that are not their own)
@@ -100,7 +101,8 @@ class TwitterSms
     default                  =  { 'own_tweets' => false,
                                   'keep_alive' => true,
                                     'per_hour' => 30,
-                                       'debug' => false}
+                                       'debug' => false,
+                              'refresh_config' => false}
 
     # Merge specified config onto defaults
     @config                  =  default.merge(loaded_config['config'])

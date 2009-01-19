@@ -4,6 +4,7 @@ require 'twitter'
 require 'tlsmail'
 require 'optparse'
 require 'cgi'
+require 'net/pop'
 
 SEC_PER_HOUR = 3600 # Seconds per hour
 
@@ -24,8 +25,10 @@ class TwitterSms
     begin # do-while
       load_config if config_stale? unless config['refresh_config']
 
-      tweets = update
-      send tweets unless tweets.nil?
+      if config['active']
+        tweets = update
+        send tweets unless tweets.nil?
+      end
 
       if @config['keep_alive']
         putd "Waiting for ~#{@config['wait']/60.0} minutes..."
@@ -98,14 +101,15 @@ class TwitterSms
     @user                    =  loaded_config['user']
     @bot                     =  loaded_config['bot']
 
-    default                  =  { 'own_tweets' => false,
+    defaults                 =  { 'own_tweets' => false,
                                   'keep_alive' => true,
                                     'per_hour' => 30,
                                        'debug' => false,
-                              'refresh_config' => false}
+                              'refresh_config' => false,
+                                      'active' => true}
 
     # Merge specified config onto defaults
-    @config                  =  default.merge(loaded_config['config'])
+    @config                  =  defaults.merge(loaded_config['config'])
 
     set_wait
     @last_check = Time.now - @config['wait']

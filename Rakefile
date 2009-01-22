@@ -7,10 +7,10 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
     s.name = "twitter-sms"
-    s.summary = %Q{TODO}
+    s.summary = %Q{Twitter-SMS lets you send SMS updates to your phone}
     s.email = "neufelry@gmail.com"
     s.homepage = "http://github.com/neufelry/twitter-sms"
-    s.description = "TODO"
+    s.description = "Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account."
     s.authors = ["Ryan Neufeld"]
   end
 rescue LoadError

@@ -8,6 +8,7 @@ require 'net/pop'
 if RUBY_VERSION < "1.9"
   raise "Version too low. Please get Ruby 1.9"
 end
+
 SEC_PER_HOUR = 3600 # Seconds per hour (don't like this...)
 
 class TwitterSms

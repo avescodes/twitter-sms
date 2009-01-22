@@ -12,6 +12,8 @@ begin
     s.homepage = "http://github.com/neufelry/twitter-sms"
     s.description = "Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account."
     s.authors = ["Ryan Neufeld"]
+    s.executables = ["twitter-sms"]
+    ['neufelry-twitter','tlsmail'].each {|g| s.add_dependency g }
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"

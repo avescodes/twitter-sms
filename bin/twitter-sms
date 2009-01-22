@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby -ws
 require 'rubygems'
-require 'neufelry-twitter-sms'
+gem 'twitter-sms', '> 0'
+require 'TwitterSms'
 
 program = TwitterSms.new
 program.run

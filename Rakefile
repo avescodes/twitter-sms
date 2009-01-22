@@ -13,6 +13,7 @@ begin
     s.description = "Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account."
     s.authors = ["Ryan Neufeld"]
     s.executables = ["twitter-sms"]
+    s.files = FileList["[A-Z]*.*", "{bin,generators,lib,test,spec}/**/*"]
     ['neufelry-twitter','tlsmail'].each {|g| s.add_dependency g }
   end
 rescue LoadError

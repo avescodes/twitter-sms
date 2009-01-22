@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = %q{Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account.}
   s.email = %q{neufelry@gmail.com}
   s.executables = ["twitter-sms"]
-  s.files = ["README.md", "VERSION.yml", "bin/twitter-sms", "lib/twitter-sms", "lib/twitter-sms/twitter-sms.rb", "test/test_helper.rb", "test/twitter_sms_test.rb"]
+  s.files = ["README.md", "VERSION.yml", "bin/twitter-sms", "lib/twitter-sms.rb", "test/test_helper.rb", "test/twitter_sms_test.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/neufelry/twitter-sms}
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]

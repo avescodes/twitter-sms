@@ -48,18 +48,20 @@ class TwitterSms
         now         = Time.now
         tweets      = twitter.timeline(:friends, :since => @last_check)
         @last_check = now
-
-        # Block own tweets if specified via settings
-        tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
-        # Don't send messages from users under no_follow
-        tweets.reject! {|t| @config['no_follow'].member?(t.user.screen_name) }
-        tweets.reverse # reverse-chronological
       else
         putd "Your account has run out of API calls; call not made."
       end
     rescue
       putd "Error occured retreiving timeline. Perhaps Internet is down?"
     end
+  end
+
+  def reduce_tweets(tweets)
+    # Block own tweets if specified via settings
+    tweets.reject! {|t| t.user.screen_name == @user['name']} unless @config['own_tweets']
+    # Don't send messages from users under no_follow
+    tweets.reject! {|t| @config['no_follow'].member?(t.user.screen_name) }
+    tweets.reverse # reverse-chronological
   end
 
   # Email via Gmail SMTP any tweets to the desired cell phone
@@ -99,8 +101,22 @@ class TwitterSms
     end
   end
 
+  # Verify syntax for dissecting pop message
   def process_pop_message(msg)
-    p mail.inspect
+    # p msg.inspect
+    if msg.sender == @user['phone'] # must come from phone
+      # Extract this log later
+      if msg.body =~ /^off$/
+        @config['active'] = false
+      elsif msg.body =~ /^on$/
+        @config['active'] = true
+      else
+        msg.body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
+        msg.body.scan(/follow (\w+)/) {|_| @config['no_follow'] -= [$1] } # also set follow
+
+      end
+    end
+
   end
 
   # Parse and store a config file (either as an initial load or as

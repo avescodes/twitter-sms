@@ -4,6 +4,7 @@ require 'tlsmail'
 require 'optparse'
 require 'cgi'
 require 'net/pop'
+require 'rmail'
 
 if RUBY_VERSION < "1.9"
   raise "Version too low. Please get Ruby 1.9"
@@ -85,6 +86,15 @@ class TwitterSms
     end
   end
 
+  def receive_messages
+    Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE) # maybe verify...
+    Net::POP3.start('pop.gmail.com',995, @bot['email'], @bot['password']) do |pop|
+      pop.each_mail do |mail|
+        process_pop_message(mail.pop)
+      end
+    end
+  end
+
   private
 
   # Put Debug (prepend time) if debug printouts turned on
@@ -92,31 +102,37 @@ class TwitterSms
     puts "#{Time.now.strftime("(%b %d - %H:%M:%S)")} #{message}" if @config['debug']
   end
 
-  def collect_pop_messages
-    Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE) # maybe verify...
-    Net::POP3.start('pop.gmail.com',995, @bot['email'], @bot['password']) do |pop|
-      pop.each_mail do |mail|
-        process_pop_message(mail)
+  # Verify syntax for dissecting pop message
+  def process_pop_message(msg)
+    r_msg = RMail::Parser.read(msg) # Just plain easier to get fields
+
+    #must be extracted before we reduce to plaintext
+    from = r_msg.header.from[0].address
+
+    r_msg = reduce_to_plaintext(r_msg)
+    body = r_msg.body # RMail does not seem to be grabbing the body right
+
+    if from == @user['phone'] # must come from phone
+    # Extract this log later
+      if body =~ /^off$/i
+        @config['active'] = false
+      elsif body =~ /^on$/i
+        @config['active'] = true
+      else
+        body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
+        body.scan(/follow (\w+)/) {|_| @config['no_follow'] -= [$1] } # also set follow
       end
     end
   end
 
-  # Verify syntax for dissecting pop message
-  def process_pop_message(msg)
-    # p msg.inspect
-#     if msg.sender == @user['phone'] # must come from phone
-#       # Extract this log later
-#       if msg.body =~ /^off$/
-#         @config['active'] = false
-#       elsif msg.body =~ /^on$/
-#         @config['active'] = true
-#       else
-#         msg.body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
-#         msg.body.scan(/follow (\w+)/) {|_| @config['no_follow'] -= [$1] } # also set follow
-
-#       end
+  def reduce_to_plaintext(r_msg)
+    if r_msg.multipart?
+      r_msg.body.find do |part|
+        part.header.content_type == "text/plain"
+      end
+    else
+      r_msg
     end
-
   end
 
   # Parse and store a config file (either as an initial load or as

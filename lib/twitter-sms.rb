@@ -104,19 +104,20 @@ class TwitterSms
 
   # Verify syntax for dissecting pop message
   def process_pop_message(msg)
-    r_msg = RMail::Parser.read(msg) # Just plain easier to get fields
+    TwitterSms::space_stripper!(msg) # Remove sometimes broken extra spaces
+    r_msg = RMail::Parser.read(msg)
 
     #must be extracted before we reduce to plaintext
     from = r_msg.header.from[0].address
 
-    r_msg = reduce_to_plaintext(r_msg)
-    body = r_msg.body # RMail does not seem to be grabbing the body right
+    plain = reduce_to_plaintext(r_msg)
+    body = plain.body
 
     if from == @user['phone'] # must come from phone
     # Extract this log later
-      if body =~ /^off$/i
+      if body =~ /^off\w*/i
         @config['active'] = false
-      elsif body =~ /^on$/i
+      elsif body =~ /^on\w*/i
         @config['active'] = true
       else
         body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
@@ -125,9 +126,10 @@ class TwitterSms
     end
   end
 
+  # Sometimes Rmail messages are multipart, we only want plaintext
   def reduce_to_plaintext(r_msg)
     if r_msg.multipart?
-      r_msg.body.find do |part|
+      r_msg = r_msg.body.find do |part|
         part.header.content_type == "text/plain"
       end
     else
@@ -204,6 +206,7 @@ class TwitterSms
     opts.parse!(args)
   end
 
+  # Config is stale if a newer version exists in the filesystem than last checked
   def config_stale?
     return File.mtime(@config_file['name']) > @config_file['modified_at']
   end
@@ -217,9 +220,12 @@ class TwitterSms
     "#{tweet.user.screen_name}: #{CGI.escapeHTML(tweet.text)}"
   end
 
-end
+  def self.filename(path)
+    path.split('/')[-1]
+  end
 
-def filename(path)
-  path.split('/')[-1]
+  # RMail doesn't like parsing body properly if there is a mistaken ' ' between body and header
+  def self.space_stripper!(msg)
+    msg.gsub!(/^\s+$/,'')
+  end
 end
-

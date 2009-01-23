@@ -104,17 +104,17 @@ class TwitterSms
   # Verify syntax for dissecting pop message
   def process_pop_message(msg)
     # p msg.inspect
-    if msg.sender == @user['phone'] # must come from phone
-      # Extract this log later
-      if msg.body =~ /^off$/
-        @config['active'] = false
-      elsif msg.body =~ /^on$/
-        @config['active'] = true
-      else
-        msg.body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
-        msg.body.scan(/follow (\w+)/) {|_| @config['no_follow'] -= [$1] } # also set follow
+#     if msg.sender == @user['phone'] # must come from phone
+#       # Extract this log later
+#       if msg.body =~ /^off$/
+#         @config['active'] = false
+#       elsif msg.body =~ /^on$/
+#         @config['active'] = true
+#       else
+#         msg.body.scan(/ignore (\w+)/) {|_| @config['no_follow'] << $1 }
+#         msg.body.scan(/follow (\w+)/) {|_| @config['no_follow'] -= [$1] } # also set follow
 
-      end
+#       end
     end
 
   end

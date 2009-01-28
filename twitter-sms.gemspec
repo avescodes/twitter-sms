@@ -2,16 +2,16 @@
 
 Gem::Specification.new do |s|
   s.name = %q{twitter-sms}
-  s.version = "0.4.0"
+  s.version = "0.4.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Neufeld"]
-  s.date = %q{2009-01-22}
+  s.date = %q{2009-01-27}
   s.default_executable = %q{twitter-sms}
   s.description = %q{Twitter-SMS provides a persistent command line tool to send SMS updates to your mobile phone via a gmail account.}
   s.email = %q{neufelry@gmail.com}
   s.executables = ["twitter-sms"]
-  s.files = ["README.md", "VERSION.yml", "bin/twitter-sms", "lib/twitter-sms.rb", "test/test_helper.rb", "test/twitter_sms_test.rb"]
+  s.files = ["README.md", "VERSION.yml", "bin/twitter-sms", "lib/logger.rb", "lib/twitter-sms.rb", "test/test_helper.rb", "test/twitter_sms_test.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/neufelry/twitter-sms}
   s.rdoc_options = ["--inline-source", "--charset=UTF-8"]

@@ -2,6 +2,6 @@
 require 'rubygems'
 require 'twitter-sms'
 
-program = TwitterSms.new
+program = TwitterSms::Checker.new
 program.run
 

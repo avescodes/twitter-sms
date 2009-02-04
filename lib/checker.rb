@@ -163,7 +163,6 @@ module TwitterSms
     # Parse and store a config file (either as an initial load or as
     # an update)
     def load_config(config_file=@config_file['name'])
-      # Load config file -- Add try block here
       loaded_config           =  YAML.load_file(config_file)
       @config_file            =  { 'name' => config_file,
         'modified_at' => File.mtime(config_file) }
@@ -172,23 +171,26 @@ module TwitterSms
       @user                    =  loaded_config['user']
       @bot                     =  loaded_config['bot']
 
+      # Extract this to YAML defaults file
       config_defaults          = { 'own_tweets' => false,
-        'keep_alive' => true,
-        'per_hour' => 30,
-        'debug' => false,
-        'dont_refresh' => false,
-        'active' => true,
-        'log_to' => 'file'}
+                                   'keep_alive' => true,
+                                     'per_hour' => 30,
+                                        'debug' => false,
+                                 'dont_refresh' => false,
+                                       'active' => true,
+                                       'log_to' => 'file'}
 
       # Merge specified config onto defaults
-      @config                  = config_defaults.merge(loaded_config['config'])
+      @config = config_defaults.merge(loaded_config['config'])
 
       set_wait
+
+      # Manually set "last_check" so update actually pulls prior tweets
       @last_check = Time.now - @config['wait']
       putd "Loaded config file"
     end
 
-    # Set wait time based on times per hour
+    # @config['wait'] is the number of seconds to wait
     def set_wait
       @config['wait'] = SEC_PER_HOUR / @config['per_hour']
     end
@@ -244,7 +246,7 @@ module TwitterSms
         "#{tweet.user.screen_name}: #{CGI.escapeHTML(tweet.text)}"
     end
 
-    def self.filename(path)
+    def self.filename_to_ary(path)
       path.split('/')[-1]
     end
 

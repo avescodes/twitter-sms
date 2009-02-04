@@ -14,7 +14,7 @@ begin
     s.authors = ["Ryan Neufeld"]
     s.executables = ["twitter-sms"]
     s.files = FileList["[A-Z]*.*", "{bin,generators,lib,test,spec}/**/*"]
-    ['neufelry-twitter','tlsmail'].each {|g| s.add_dependency g }
+    ['neufelry-twitter','tlsmail','rmail'].each {|g| s.add_dependency g }
   end
 rescue LoadError
   puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"

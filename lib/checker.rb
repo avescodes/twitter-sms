@@ -22,6 +22,8 @@ module TwitterSms
 
   class Checker
 
+    attr_reader :config
+
     def initialize(config_file="#{ENV['HOME']}/.twitter-sms.conf", args=ARGV)
       load_config(config_file)
       load_opts(args) # Loaded options are intended to overide defaults

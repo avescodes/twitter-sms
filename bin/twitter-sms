@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby -s
 require 'rubygems'
-require 'twitter-sms'
+require 'twitter-sms/checker'
 
 program = TwitterSms::Checker.new
 program.run

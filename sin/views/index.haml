@@ -1,0 +1,11 @@
+%h2 Twitter-sms: SMS for the Rest
+%p= "User: #{@twitter.username}"
+%p 
+  Active: 
+  = @active
+%p
+  Ignoring:
+  %ul
+    - @ignored.each do |person|
+      %li= twitter_link person
+    

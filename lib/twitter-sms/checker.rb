@@ -24,6 +24,10 @@ module TwitterSms
 
     attr_reader :config
 
+    def username
+      @user['name']
+    end
+
     def initialize(config_file="#{ENV['HOME']}/.twitter-sms.conf", args=ARGV)
       load_config(config_file)
       load_opts(args) # Loaded options are intended to overide defaults

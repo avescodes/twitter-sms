@@ -33,7 +33,7 @@ One can also run the script as a cron job; instructions to follow soon...
 
 Testing
 -------
-Since I won't be giving everyone the password to my bot's gmail account I'll provide what your own "test/test.conf" file should look like
+Since I won't be giving everyone the password to my bot's gmail account I'll provide you with what the "test/test.conf" file should look like. You MUST have active internet access for tests to pass.
     bot:
       email: "#{INSERT_BOT_GMAIL_ACCOUNT}"
       password: #{INSERT_BOT_PASSWORD}

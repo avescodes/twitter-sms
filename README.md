@@ -30,3 +30,17 @@ Here is an example conf:
 This config will cause the script to run forever; sending you the last 5 minutes tweets every 5 minutes. (60 / 5 == 12)
 
 One can also run the script as a cron job; instructions to follow soon...
+
+Testing
+-------
+Since I won't be giving everyone the password to my bot's gmail account I'll provide what your own "test/test.conf" file should look like
+    bot:
+      email: "#{INSERT_BOT_GMAIL_ACCOUNT}"
+      password: #{INSERT_BOT_PASSWORD}
+    user:
+      name: "#{INSERT_VALID_TWITTER_ACCOUNT}" 
+      password: #{INSERT_TWITTER_PASSWORD}
+      phone: "#{INSERT_BOT_GMAIL_ACCOUNT}"         # <-- This is important, the test emails itself
+    config:
+      keep_alive: false
+      own_tweets: true

@@ -34,6 +34,7 @@ module TwitterSms
 
       # Required for gmail smtp (and not a part of standalone Net::SMTP)
       Net::SMTP.enable_tls(OpenSSL::SSL::VERIFY_NONE)
+      Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE) # maybe verify...
     end
 
     # Run the twitter-sms bot once or repeatedly, depending on config
@@ -105,7 +106,6 @@ module TwitterSms
     end
 
     def receive_messages
-      Net::POP3.enable_ssl(OpenSSL::SSL::VERIFY_NONE) # maybe verify...
       Net::POP3.start('pop.gmail.com',995, @bot['email'], @bot['password']) do |pop|
         pop.each_mail do |mail|
           process_pop_message(mail.pop)

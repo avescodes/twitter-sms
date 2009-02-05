@@ -5,7 +5,7 @@ require 'twitter-sms'
 require 'json'
 
 configure do
-  Twitter = TwitterSms::Checker.new
+  TwtSms_Instance = TwitterSms::Checker.new
 end
 
 helpers do
@@ -15,9 +15,9 @@ helpers do
 end
 
 before do
-  @active = Twitter.config['active']
-  @ignored = Twitter.config['no_follow']
-  @twitter = Twitter
+  @active = TwtSms_Instance.config['active']
+  @ignored = TwtSms_Instance.config['no_follow']
+  @twitter = TwtSms_Instance
 end
 
 get '/*' do

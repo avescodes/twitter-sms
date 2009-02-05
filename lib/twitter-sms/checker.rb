@@ -156,6 +156,7 @@ module TwitterSms
     end
 
     # Sometimes Rmail messages are multipart, we only want plaintext
+    #TEST?
     def reduce_to_plaintext(r_msg)
       if r_msg.multipart?
         r_msg = r_msg.body.find do |part|

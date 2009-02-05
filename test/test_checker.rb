@@ -23,21 +23,19 @@ class CheckerTest < Test::Unit::TestCase
         assert_equal @checker.username, "twt_bot"
       end
 
-      # How to do without giving away password?
+      should "set wait time in seconds properly" do
+        per_hour = @checker.config['per_hour']
+        assert_equal( @checker.config['wait'], 3600/per_hour )
+      end
+
       # should "return an array of tweets when updating (what about internet down?)
+      # should "be able to send a fake message and receive it"
 
       context "handling tweets" do
-        setup do
-          dir = `pwd`.chomp.gsub(/test\/$/,"")
-        # Pull in marshalled tweets
-        end
-
         # should "reduce two tweets to one when ignoring user"
         # should "reduce two tweets to one when not following self"
         # should "reverse order of tweets"
       end
-      # Not sure how to test run as a whole, going to test individual parts
-        # Gotta remember not to test the gems i'm using but just how i deal with data!
     end
   end
 end
